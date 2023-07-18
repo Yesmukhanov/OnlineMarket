@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"
+      layout:decorate="main_layout.html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<div layout:fragment="siteContent">
+    <div class="row mt-3">
+        <div class="col-6 mx-auto mb-3">
+            <h3 class="text-center mt-3 mb-3">Write name category</h3>
+            <div class="row mt-3">
+                <div class="col-6 mx-auto">
+                    <label>NAME: </label>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6 mx-auto">
+                    <input type="text" id="name" class="form-control" required placeholder="Category">
+                </div>
+            </div>
+              <div class="row mt-3">
+                    <div class="col-6 mx-auto">
+                          <button class="btn btn-primary" onclick="addCategory()" >Add Category</button>
+                    </div>
+              </div>
+        </div>
+          <script type="text/javascript">
+
+                function addCategory() {
+                    let name = document.getElementById("name");
+
+                    const http = new XMLHttpRequest();
+                    http.open("POST", "/category", true);
+                    http.setRequestHeader("Content-type", "application/json");
+
+                    http.onreadystatechange = function () {
+                        if (http.readyState === XMLHttpRequest.DONE && http.status == 200) {
+                            name.value = "";
+                            alert("You are successfully added category")
+                        }
+                    };
+
+                    let body = {
+                        "name": name.value
+                    };
+
+                    body = JSON.stringify(body);
+                    http.send(body);
+                }
+
+          </script>
+
+    </div>
+</div>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="main_layout.html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<div layout:fragment="siteContent">
+    <input id="user_id" th:value="${#authentication.principal.id}" type="hidden">
+    <input id="product_id" type="hidden">
+    <div class="row">
+        <div class="col-10 mx-auto">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NAME</th>
+                    <th>PRICE</th>
+                    <th>DETAILS</th>
+                </tr>
+                </thead>
+                <tbody id="product">
+                </tbody>
+            </table>
+            <p class="text-center">TOTAL PRICE: <strong id="total_price"></strong> KZT</p>
+            <button class="btn btn-primary" id="order" onclick="orderAllUserProducts()">ORDER</button>
+
+            <div aria-hidden="true" aria-labelledby="staticBackdropLabel" class="modal fade" data-bs-backdrop="static"
+                 data-bs-keyboard="false" id="detailsModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12 mx-auto">
+                                    <div class="col-12">
+                                        NAME:
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <input class="form-control" id="product_name" readonly type="text">
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        DESCRIPTION:
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <textarea class="form-control" id="product_description" readonly rows="5"> </textarea>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        PRICE:
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <input class="form-control" id="product_price" readonly type="number">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="button" onclick="deleteFromBasket()">DELETE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        getAllUserProducts();
+
+        function getAllUserProducts() {
+            let user_id = document.getElementById("user_id");
+
+            const http = new XMLHttpRequest();
+            http.open("GET", "/order/" + user_id.value, true);
+
+            let tableContent = "";
+            let sum = 0;
+            http.onreadystatechange = function () {
+                if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+                    let products = JSON.parse(http.responseText);
+
+                    if(products.length === 0){
+                        document.getElementById("order").hidden = true;
+                    }
+
+                    for (let i = 0; i < products.length; i++) {
+                        tableContent += "<tr>";
+                        tableContent += "<td>" + products[i].id + "</td>"
+                        tableContent += "<td>" + products[i].name + "</td>"
+                        tableContent += "<td>" + products[i].price + "</td>"
+                        tableContent += "<td> <button class='btn btn-primary' " +
+                            "onclick='openDetails(" + products[i].id + ")'>DETAILS</button></td>"
+                        tableContent += "</tr>";
+                        sum += parseInt(products[i].price);
+                    }
+
+                    document.getElementById("product").innerHTML = tableContent;
+                    document.getElementById("total_price").innerHTML = sum;
+                }
+            };
+            http.send();
+        }
+
+        function openDetails(id) {
+            details = new bootstrap.Modal(document.getElementById('detailsModal'));
+            document.getElementById("product_id").value = id;
+            let name = document.getElementById("product_name");
+            let description = document.getElementById("product_description");
+            let price = document.getElementById("product_price");
+
+            const http = new XMLHttpRequest();
+            http.open("GET", "/product/getOne/" + id, true);
+
+            http.onreadystatechange = function () {
+                if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+                    let product = JSON.parse(http.responseText);
+                    name.value = product.name;
+                    description.value = product.description;
+                    price.value = product.price;
+                    details.show();
+                }
+            };
+
+            http.send();
+        }
+
+        function deleteFromBasket(){
+            let product_id = document.getElementById("product_id");
+            let user_id = document.getElementById("user_id");
+
+            const http = new XMLHttpRequest();
+            http.open("DELETE", "/order/" + user_id.value + "/" + product_id.value, true);
+
+            http.onreadystatechange = function (){
+                if (http.readyState === XMLHttpRequest.DONE && http.status === 200){
+                    getAllUserProducts();
+                    details.hide();
+                }
+            };
+
+            http.send();
+        }
+
+        function orderAllUserProducts(){
+
+            let user_id = document.getElementById("user_id");
+
+            const http = new XMLHttpRequest();
+            http.open("POST", "/order/" + user_id.value, true);
+
+            http.onreadystatechange = function (){
+                if (http.readyState === XMLHttpRequest.DONE && http.status === 200){
+                    alert("You are successfully ordered");
+                    getAllUserProducts();
+                }
+            };
+
+            http.send();
+
+        }
+    </script>
+</div>
+</html>

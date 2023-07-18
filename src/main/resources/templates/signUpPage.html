@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="main_layout.html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<div layout:fragment="siteContent">
+    <div class="row">
+        <div class="col-6 mx-auto">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"
+                 th:if="${param.emailerror != null}">
+                Email is busy!
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+            </div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${param.success != null}">
+                You Are Successfully Registered!
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+            </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"
+                 th:if="${param.passworderror != null}">
+                Password Are Not Same!
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+            </div>
+            <form method="post" th:action="@{'/to_sign_up'}">
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <label>EMAIL:</label>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <input class="form-control" name="user_email" placeholder="Email" required type="email">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <label>FULL NAME:</label>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <input class="form-control" name="user_full_name" placeholder="Full Name" required type="text">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <label>PASSWORD:</label>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <input class="form-control" name="user_password" placeholder="Password" required
+                               type="password">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <label>REPEAT PASSWORD:</label>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <input class="form-control" name="user_repeat_password" placeholder=
+                                "Repeat Password" required type="password">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button class="btn btn-success">SIGN UP</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script type="text/javascript">
+            function addUser(){
+
+            }
+        </script>
+    </div>
+</div>
+</html>

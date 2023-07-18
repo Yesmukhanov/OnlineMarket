@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="main_layout.html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+<div layout:fragment="siteContent">
+    <input id="product_id" type="hidden">
+    <div class="row mt-3">
+        <div class="col-6 mx-auto">
+            <button class="btn btn-success" onclick="addProductModal()">Add Product</button>
+            <div aria-hidden="true" aria-labelledby="addProduct" class="modal fade" id="addModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="addProduct">Add Product</h1>
+                            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label>NAME: </label>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <input class="form-control" id="add_product_name" placeholder="Name" type="text">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label>DESCRIPTION: </label>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <textarea class="form-control" id="add_product_description"
+                                              placeholder="Description"></textarea>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label>PRICE(KZT): </label>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <input class="form-control" id="add_product_price" placeholder="Price"
+                                           type="number">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                            <button class="btn btn-primary" onclick="addProduct()" type="button">Add Product</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table mt-3 col-6">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NAME</th>
+                    <th>EDIT</th>
+                </tr>
+                </thead>
+                <tbody id="categoryListBody">
+                </tbody>
+            </table>
+
+            <div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="productDetails"
+                 tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Product Details</h1>
+                            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label>NAME:</label>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <input class="form-control" id="product_name" type="text">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label>DESCRIPTION:</label>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <textarea class="form-control" id="product_description"></textarea>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label>PRICE(KZT):</label>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <input class="form-control" id="product_price" type="number">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" data-bs-dismiss="modal" onclick="deleteProduct()"
+                                    type="button">DELETE
+                            </button>
+                            <button class="btn btn-primary" onclick="updateProduct()"
+                                    type="button">Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                getAllProducts();
+
+                function addProduct() {
+                    let category = JSON.parse(localStorage.getItem("id"));
+
+                    let name = document.getElementById("add_product_name");
+                    let description = document.getElementById("add_product_description");
+                    let price = document.getElementById("add_product_price");
+
+
+                    const http = new XMLHttpRequest();
+                    http.open("POST", "/product", true);
+                    http.setRequestHeader("Content-type", "application/json");
+
+
+                    http.onreadystatechange = function () {
+                        if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+                            name.value = "";
+                            description.value = "";
+                            price.value = "";
+                            getAllProducts();
+                            details.hide();
+                        }
+                    };
+
+
+                    let body = {
+                        "name": name.value,
+                        "description": description.value,
+                        "price": price.value,
+                        "category":
+                            {
+                                "id": category.id,
+                                "name": category.name
+                            }
+
+                    }
+                    http.send(JSON.stringify(body));
+                }
+
+                function deleteProduct() {
+                    let id = document.getElementById("product_id");
+
+                    const http = new XMLHttpRequest();
+                    http.open("DELETE", "/product/" + id.value, true);
+
+                    http.onreadystatechange = function () {
+                        if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+                            getAllProducts();
+                            addModal.hide();
+                        }
+                    };
+                    http.send();
+                }
+
+                function getAllProducts() {
+                    let id = JSON.parse(localStorage.getItem("id"));
+
+                    const http = new XMLHttpRequest();
+                    http.open("GET", "/product/" + id.id, true);
+
+                    let content = "";
+
+                    http.onreadystatechange = function () {
+                        if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+
+                            let products = JSON.parse(http.responseText);
+
+                            for (let i = 0; i < products.length; i++) {
+                                content += "<tr>"
+                                content += "<td>" + products[i].id + "</td>"
+                                content += "<td>" + products[i].name + "</td>"
+                                content += "<td>" + "<button class='btn btn-primary' " +
+                                    "onclick='openProduct(" + products[i].id + ")'>Edit</button>" + "</td>"
+                                content += "</tr>"
+                            }
+
+                            document.getElementById("categoryListBody").innerHTML = content;
+
+                        }
+                    };
+                    http.send();
+                }
+
+                function openProduct(id) {
+                    details = new bootstrap.Modal(document.getElementById('productDetails'));
+
+                    const http = new XMLHttpRequest();
+                    http.open("GET", "/product/getOne/" + id, true);
+                    http.setRequestHeader("Content-type", "application/json");
+
+                    let name = document.getElementById("product_name");
+                    let description = document.getElementById("product_description");
+                    let price = document.getElementById("product_price");
+
+                    http.onreadystatechange = function () {
+                        if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+                            let product = JSON.parse(http.responseText);
+
+                            name.value = product.name;
+                            description.value = product.description;
+                            price.value = product.price;
+
+                            document.getElementById("product_id").value = id;
+                            details.show();
+                        }
+                    };
+                    http.send();
+                }
+
+                function updateProduct() {
+
+                    const http = new XMLHttpRequest();
+                    http.open("PUT", "/product", true);
+                    http.setRequestHeader("Content-type", "application/json");
+
+                    let category = JSON.parse(localStorage.getItem("id"));
+
+                    let id = document.getElementById("product_id");
+                    let name = document.getElementById("product_name");
+                    let description = document.getElementById("product_description");
+                    let price = document.getElementById("product_price");
+
+
+                    http.onreadystatechange = function () {
+                        if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+                            getAllProducts();
+                            details.hide();
+                        }
+                    };
+
+                    let product = {
+                        'id': id.value,
+                        'name': name.value,
+                        'description': description.value,
+                        'price': price.value,
+                        'category': {
+                            'id': category.id,
+                            'name': category.name
+                        }
+                    }
+                    console.log(product);
+
+                    http.send(JSON.stringify(product));
+                }
+
+                function addProductModal() {
+                    addModal = new bootstrap.Modal(document.getElementById('addModal'));
+                    addModal.show();
+                }
+            </script>
+        </div>
+    </div>
+</div>
+</div>
+</html>

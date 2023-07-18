@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"
+      layout:decorate="main_layout.html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<div layout:fragment="siteContent">
+    <div class="row mt-3">
+        <div class="col-6 mx-auto">
+            <input id="category_id" type="hidden">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NAME</th>
+                    <th>EDIT</th>
+                    <th>DETAILS</th>
+                </tr>
+                </thead>
+                <tbody id="categoryListBody">
+                </tbody>
+                <div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="detailsModal"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal"
+                                        type="button"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row mx-auto">
+                                    <div class="col-6 mx-auto">
+                                        <label>Name: </label>
+                                    </div>
+                                </div>
+                                <div class="row mx-auto">
+                                    <div class="col-6 mx-auto">
+                                        <input class="form-control" id="details_name" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button"
+                                onclick="deleteCategory()">DELETE</button>
+                                <button class="btn btn-primary" type="button" onclick="updateCategory()">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </table>
+            <script type="text/javascript">
+                getAllCategories();
+
+                function getAllCategories() {
+                    const http = new XMLHttpRequest();
+                    http.open("GET", "/category", true);
+
+                    http.onreadystatechange = function () {
+                        if (http.readyState === XMLHttpRequest.DONE && http.status == 200) {
+                            let categoryList = JSON.parse(http.responseText);
+                            let tableContent = "";
+
+                            for (let i = 0; i < categoryList.length; i++) {
+                                tableContent += "<tr>";
+                                tableContent += "<td>" + categoryList[i].id + "</td>"
+                                tableContent += "<td>" + categoryList[i].name + "</td>"
+                                tableContent += "<td> <button' class='btn btn-primary btn-sm' onclick=\"detailsPage(" +
+                                    categoryList[i].id + ")\">EDIT</button></td>";
+                                tableContent += "<td> <button class='btn btn-primary btn-sm' onclick=\"openDetailsPage(" +
+                                    categoryList[i].id + ",'" + categoryList[i].name + "')\">Details</button></td>";
+                                tableContent += "</tr>";
+
+                            }
+                            document.getElementById("categoryListBody").innerHTML = tableContent;
+                        }
+                    }
+                    http.send();
+                }
+
+                function openDetailsPage(id, name) {
+                    let data = {
+                        "id": id,
+                        "name": name
+                    }
+
+                    localStorage.setItem("id", JSON.stringify(data));
+                    window.open("category1/" + id, "_self");
+                }
+
+                function detailsPage(id) {
+                    document.getElementById("category_id").value = id;
+                    details = new bootstrap.Modal(document.getElementById('detailsModal'));
+
+                    let name = document.getElementById("details_name");
+                    const http = new XMLHttpRequest();
+                    http.open("GET", "/category/" + id, true);
+
+                    http.onreadystatechange = function () {
+                        if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+                            let data = JSON.parse(http.responseText);
+                            name.value = data.name;
+                            details.show();
+                        }
+                    }
+
+                    http.send();
+                }
+
+                function updateCategory(){
+                    let id = document.getElementById("category_id");
+                    let name = document.getElementById("details_name");
+
+
+                    let body = "";
+
+                    const http = new XMLHttpRequest();
+                    http.open("PUT", "/category", true);
+                    http.setRequestHeader("Content-type", "application/json");
+
+                    http.onreadystatechange = function (){
+                        if (http.readyState === XMLHttpRequest.DONE && http.status === 200){
+                            getAllCategories();
+                            details.hide();
+                        }
+                    };
+
+                    body = {
+                        "id": id.value,
+                        "name" : name.value
+                    };
+
+                    body = JSON.stringify(body);
+                    http.send(body);
+                }
+
+                function deleteCategory(){
+                    let id = document.getElementById("category_id");
+
+                    const http = new XMLHttpRequest();
+                    http.open("DELETE", "/category/" + id.value, true);
+
+                    http.onreadystatechange = function (){
+                        if (http.readyState === XMLHttpRequest.DONE && http.status === 200){
+                            getAllCategories();
+                            details.hide();
+                        }
+                    }
+
+                    http.send();
+
+                }
+            </script>
+
+        </div>
+    </div>
+</html>

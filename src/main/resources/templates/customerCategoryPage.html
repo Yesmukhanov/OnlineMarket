@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="main_layout.html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<div layout:fragment="siteContent">
+    <input id="user_id" th:value="${#authentication.principal.id}" type="hidden">
+    <h1 class="text-center text-danger" id="text"></h1>
+    <div class="row">
+        <div class="col-10 mx-auto">
+            <div class="row" id="productBody">
+
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        getAllProducts();
+
+        function getAllProducts() {
+            let categoryId = JSON.parse(localStorage.getItem("category_id"));
+            const http = new XMLHttpRequest();
+            http.open("GET", "/product/" + categoryId.id, true);
+
+            let cardContent = "";
+
+            http.onreadystatechange = function () {
+                if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+
+                    let products = JSON.parse(http.responseText);
+
+                    for (let i = 0; i < products.length; i++) {
+                        cardContent += "<div class='col mt-3 col-5'>";
+                        cardContent += "<div class='card'>";
+                        cardContent += "<div class='card-body'>";
+                        cardContent += "<h2 class='card-title'> " + products[i].name + " </h2>";
+                        cardContent += "<h5 class='card-text'> " + products[i].description + " </h5>";
+                        cardContent += "<h5 class='card-text'> " + products[i].price + "  KZT </h5>";
+
+                        cardContent += "<button class='btn btn-primary btn-sm' " +
+                            "onclick=addToCart(" + products[i].id + ")>Add to cart</button>";
+                        cardContent += '</div>';
+                        cardContent += '</div>';
+                        cardContent += '</div>';
+                    }
+                    if (products.length === 0){
+                        document.getElementById("text").innerHTML = "There are no products here";
+                    }
+                    document.getElementById("productBody").innerHTML = cardContent;
+                }
+            };
+            http.send();
+        }
+
+        function addToCart(product_id){
+            let user_id = document.getElementById("user_id");
+
+            const http = new XMLHttpRequest();
+            http.open("PUT", "/order/" + user_id.value + "/" + product_id, true);
+
+            http.onreadystatechange = function (){
+                if (http.readyState === XMLHttpRequest.DONE && http.status == 200) {
+                    getAllProducts();
+                }
+            };
+
+            http.send();
+        }
+    </script>
+</div>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="main_layout.html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+<div layout:fragment="siteContent">
+    <input type="hidden" id="orderId">
+    <div class="row">
+        <div class="col-6 mx-auto">
+            <h1 class="text-center">All Order Products:</h1>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>NAME</th>
+                            <th>PRICE</th>
+                        </tr>
+                        </thead>
+                        <tbody id="productList">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <h2 class="text-center mt-3">TOTAL PRICE:  <strong id="price"></strong></h2>
+
+            <div class="row mt-3">
+                <div class="col-12 mx-auto">
+                    <button class="btn btn-primary mx-auto" id="order_button" onclick="orderHandle()">Handle Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        getOrderDate();
+        function getOrderDate() {
+            let orderId = JSON.parse(localStorage.getItem("order_id"));
+            document.getElementById("orderId").value = orderId.id;
+            if (orderId.status === 1){
+                document.getElementById("order_button").hidden = true;
+            }
+
+            const http = new XMLHttpRequest();
+            http.open("GET", "/order/products/" + orderId.id, true);
+            let tableContent = "";
+            let totalPrice = 0;
+            http.onreadystatechange = function () {
+                if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+                    let products = JSON.parse(http.responseText);
+
+                    for (let i = 0; i < products.length; i++) {
+                        tableContent += "<tr>";
+                        tableContent += "<td>" + products[i].id + "</td>";
+                        tableContent += "<td>" + products[i].name + "</td>";
+                        tableContent += "<td>" + products[i].price + "</td>";
+                        totalPrice += parseInt(products[i].price);
+                        tableContent += "</tr>";
+                    }
+                }
+                document.getElementById("productList").innerHTML = tableContent;
+                document.getElementById("price").innerHTML = totalPrice;
+            };
+
+            http.send();
+        }
+
+        function orderHandle(){
+            let orderId = document.getElementById("orderId");
+
+            const http = new XMLHttpRequest();
+            http.open("PUT", "/order/" + orderId.value, true);
+
+            http.onreadystatechange = function (){
+                if (http.readyState === XMLHttpRequest.DONE && http.status === 200){
+                    alert("Order successfully handled");
+                }
+            };
+
+            http.send();
+        }
+
+    </script>
+</div>
+</html>

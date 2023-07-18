@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="main_layout.html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<div layout:fragment="siteContent">
+    <h1 class="text-center mb-3"> CHOOSE THE CATEGORY</h1>
+    <div class="row">
+            <div class="row" style="margin-left: 120px" id="main"></div>
+    </div>
+    <script type="text/javascript">
+        getAllCategories();
+        function getAllCategories() {
+            const http = new XMLHttpRequest();
+            http.open("GET", "/category", true);
+
+            http.onreadystatechange = function () {
+                if (http.readyState === XMLHttpRequest.DONE && http.status == 200) {
+                    let categoryList = JSON.parse(http.responseText);
+                    let cardContent = "";
+
+                    for (let i = 0; i < categoryList.length; i++) {
+                        cardContent += "<div class='col mt-3 col-5'>";
+                        cardContent += "<div class='card'>";
+                        cardContent += "<div class='card-body'>";
+                        cardContent += "<h5 class='card-title'> " + categoryList[i].name + " </h5>";
+                        cardContent += "<button class='btn btn-primary btn-sm' " +
+                            "onclick=openCategory(" + categoryList[i].id + ")>GO</button>";
+                        cardContent += '</div>';
+                        cardContent += '</div>';
+                        cardContent += '</div>';
+                    }
+
+                    document.getElementById("main").innerHTML = cardContent;
+                }
+            };
+
+            http.send();
+        }
+
+        function openCategory(id){
+            let data = {
+                "id" : id
+            }
+            localStorage.setItem("category_id", JSON.stringify(data));
+            window.open("/customer/" + id, "_self");
+        }
+
+
+    </script>
+</div>
+</html>

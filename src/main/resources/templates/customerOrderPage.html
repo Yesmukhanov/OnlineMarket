@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="main_layout.html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+<div layout:fragment="siteContent">
+    <input type="hidden" id="order_date">
+    <input type="hidden" id="order_status">
+    <div class="row">
+        <div class="col-12 mx-auto">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>DATE</th>
+                    <th>STATUS</th>
+                    <th>DETAILS</th>
+                </tr>
+                </thead>
+                <tbody id="orderList">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script type="text/javascript">
+        getAllOrders();
+
+        function getAllOrders() {
+
+            const http = new XMLHttpRequest();
+            http.open("GET", "/order/orders", true);
+            let tableContent = "";
+            http.onreadystatechange = function () {
+                if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+
+                    let orders = JSON.parse(http.responseText);
+
+                    for (let i = 0; i < orders.length; i++) {
+                        tableContent += "<tr>";
+                        tableContent += "<td>" + orders[i].id + "</td>";
+                        tableContent += "<td>" + orders[i].date + "</td>";
+                        if (orders[i].status === 0) {
+                            tableContent += "<td style='color: red'>New Request</td>";
+                        } else {
+                            tableContent += "<td>Handled</td>";
+                        }
+                        tableContent += "<td><button class='btn btn-primary btn-sm' onclick='openOrderData(" +
+                            orders[i].id + ',' + orders[i].status + ")'>Details</button></td>";
+                        tableContent += "</tr>";
+                    }
+
+                }
+                document.getElementById("orderList").innerHTML = tableContent;
+            };
+
+            http.send();
+        }
+
+        function openOrderData(id, status) {
+            let order = {
+                "id": id,
+                "status" : status
+            }
+            localStorage.setItem("order_id", JSON.stringify(order));
+            window.open("/orderDetails", "_self");
+
+        }
+
+    </script>
+
+</div>
+</html>

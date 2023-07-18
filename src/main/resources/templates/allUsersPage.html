@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="main_layout.html"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<div layout:fragment="siteContent">
+    <input id="details_id" type="hidden">
+    <input id="current_id" th:value="${#authentication.principal.id}" type="hidden">
+    <div class="row">
+        <div class="col-12">
+            <input id="idd" type="hidden">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>EMAIL</th>
+                    <th>FULL NAME</th>
+                    <th>DETAILS</th>
+                </tr>
+                </thead>
+                <tbody id="userListBody">
+                </tbody>
+            </table>
+            <div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="detailsModal"
+                 tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">User Details</h1>
+                            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label>EMAIL:</label>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <input class="form-control" id="details_email" readonly type="text">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label>FULL NAME:</label>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <input class="form-control" id="details_full_name" readonly type="text">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label>STATUS:</label>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <select class="form-select" id="details_status">
+                                        <option th:text="${(#authentication.principal.status == false ?
+                                            'Active' : 'Blocked')}"
+                                                th:value="${#authentication.principal.status}"></option>
+                                        <option th:text="${(#authentication.principal.status == false ?
+                                            'Blocked' : 'Active')}"
+                                                th:value="${!(#authentication.principal.status)}"></option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label>ROLE:</label>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <select class="form-select" id="details_role">
+                                        <option th:selected="${#authentication.principal.roleId == 1}" th:value="1">
+                                            Admin
+                                        </option>
+                                        <option th:selected="${#authentication.principal.roleId == 2}" th:value="2">
+                                            User
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" data-bs-dismiss="modal" onclick="deleteUser()"
+                                    type="button">Delete
+                            </button>
+                            <button class="btn btn-primary" onclick="updateUser()" type="button">Save</button>
+                        </div>
+                        <script type="text/javascript">
+                            function updateUser() {
+                                const http = new XMLHttpRequest();
+
+                                http.open("PUT", "/admin", true);
+                                http.setRequestHeader("Content-type", "application/json");
+
+                                let id = document.getElementById("details_id");
+                                let email = document.getElementById("details_email");
+                                let fullName = document.getElementById("details_full_name");
+                                let status = document.getElementById("details_status");
+                                let role = document.getElementById("details_role");
+                                http.onreadystatechange = function () {
+                                    if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+                                        loadUsers();
+                                        details.hide();
+                                    }
+                                }
+
+                                let body = {
+                                    'id': (id.value),
+                                    'email': (email.value),
+                                    'fullName': (fullName.value),
+                                    'status': (status.value),
+                                    'roleId': (role.value)
+                                };
+
+                                console.log(body);
+
+                                body = JSON.stringify(body);
+                                http.send(body);
+                            }
+
+                            function deleteUser() {
+                                let id = document.getElementById("details_id");
+
+                                let approve = confirm("Are you sure?");
+                                if (approve) {
+                                    const http = new XMLHttpRequest();
+                                    http.open("DELETE", "/admin/" + id.value, true);
+
+                                    http.onreadystatechange = function () {
+                                        if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+                                            loadUsers();
+                                            details.hide();
+                                        }
+                                    }
+                                    http.send();
+                                }
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        loadUsers();
+
+        function loadUsers() {
+
+            let currentId = document.getElementById("current_id");
+
+            const httpRequest = new XMLHttpRequest();
+            httpRequest.open("GET", "/admin", true);
+
+            httpRequest.onreadystatechange = function () {
+                if (httpRequest.readyState === XMLHttpRequest.DONE && httpRequest.status === 200) {
+
+                    let userList = JSON.parse(httpRequest.responseText);
+                    let tableContent = "";
+
+                    for (let i = 0; i < userList.length; i++) {
+                        if (userList[i].id == currentId.value) {
+                            console.log("YES");
+                            continue;
+                        }
+                        tableContent += "<tr>";
+                        tableContent += "<td>" + userList[i].id + "</td>";
+                        tableContent += "<td>" + userList[i].email + "</td>";
+                        tableContent += "<td>" + userList[i].fullName + "</td>";
+                        document.getElementById("idd").value = userList[i].id;
+                        tableContent += "<td><button class='btn btn-primary btn-sm' onclick='openUserData(" +
+                            userList[i].id + ")'>Details</button></td>";
+                        tableContent += "</tr>";
+                    }
+                    document.getElementById("userListBody").innerHTML = tableContent;
+                }
+            };
+
+            httpRequest.send();
+        }
+
+        function openUserData(id) {
+            details = new bootstrap.Modal(document.getElementById('detailsModal'));
+
+            let email = document.getElementById("details_email");
+            let fullName = document.getElementById("details_full_name");
+            let status = document.getElementById("details_status");
+            let role = document.getElementById("details_role");
+
+            const http = new XMLHttpRequest();
+            http.open("GET", "/admin/" + id, true);
+
+            http.onreadystatechange = function () {
+                if (http.readyState === XMLHttpRequest.DONE && http.status === 200) {
+                    let data = JSON.parse(http.responseText);
+                    email.value = data.email;
+                    fullName.value = data.fullName;
+                    status.value = data.status;
+                    role.value = data.roleId;
+                    document.getElementById("details_id").value = id;
+                    details.show();
+                }
+            };
+            http.send();
+        }
+    </script>
+</div>
+</html>
