@@ -12,13 +12,13 @@ public class CategoryController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping(value = "/addCategoryPage")
-    public String addCategoryPage(){
+    public String addCategoryPage() {
         return "addCategoryPage";
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping(value = "/category1/{id}")
-    public String categoryPage(@PathVariable(name = "id") Long id){
+    public String categoryPage(@PathVariable(name = "id") Long id) {
         return "productPage";
     }
 }

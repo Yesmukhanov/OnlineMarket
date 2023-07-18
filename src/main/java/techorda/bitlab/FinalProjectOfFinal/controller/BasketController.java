@@ -9,7 +9,7 @@ public class BasketController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/basket")
-    public String basketPage(){
+    public String basketPage() {
         return "basketPage";
     }
 }

@@ -15,31 +15,29 @@ public class CategoryRestController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public List<CategoryDTO> getCategories(){
+    public List<CategoryDTO> getCategories() {
         return categoryService.getCategories();
     }
 
     @GetMapping(value = "{id}")
-    public CategoryDTO getCategory(@PathVariable(name = "id") Long id){
+    public CategoryDTO getCategory(@PathVariable(name = "id") Long id) {
         return categoryService.getCategory(id);
     }
 
     @PostMapping
-    public CategoryDTO addCategory(@RequestBody CategoryDTO category){
+    public CategoryDTO addCategory(@RequestBody CategoryDTO category) {
         return categoryService.addCategory(category);
     }
 
     @PutMapping
-    public CategoryDTO updateCategory(@RequestBody CategoryDTO categoryDTO){
+    public CategoryDTO updateCategory(@RequestBody CategoryDTO categoryDTO) {
         return categoryService.updateCategory(categoryDTO);
     }
 
     @DeleteMapping(value = "{id}")
-    public void deleteCategory(@PathVariable(name = "id") Long id){
+    public void deleteCategory(@PathVariable(name = "id") Long id) {
         categoryService.deleteCategory(id);
     }
-
-
 
 
 }

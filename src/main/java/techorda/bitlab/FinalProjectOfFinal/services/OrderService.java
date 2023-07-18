@@ -71,7 +71,7 @@ public class OrderService {
         return orderMapper.toDtoList(orderRepository.findAllByOrderByStatus());
     }
 
-    public List<OrderDTO> getAllUserOrders(Long user_id){
+    public List<OrderDTO> getAllUserOrders(Long user_id) {
         return orderMapper.toDtoList(orderRepository.findByUserId(user_id));
     }
 
@@ -85,7 +85,7 @@ public class OrderService {
         return productMapper.toDtoList(order.getProducts());
     }
 
-    public OrderDTO handleOrder(Long orderId){
+    public OrderDTO handleOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus(1);
         return orderMapper.toDTO(orderRepository.save(order));

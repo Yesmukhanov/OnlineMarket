@@ -17,12 +17,12 @@ import techorda.bitlab.FinalProjectOfFinal.services.UserService;
 public class SecurityConfig {
 
     @Bean
-    public UserService userService(){
+    public UserService userService() {
         return new UserService();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -35,7 +35,6 @@ public class SecurityConfig {
                 http.getSharedObject(AuthenticationManagerBuilder.class);
 
         builder.userDetailsService(userService()).passwordEncoder(passwordEncoder());
-
 
 
         http.formLogin()

@@ -12,13 +12,13 @@ public class CustomerController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public String customerPage(){
+    public String customerPage() {
         return "customerPage";
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "{id}")
-    public String cartPage(@PathVariable(name = "id") Long id){
+    public String cartPage(@PathVariable(name = "id") Long id) {
         return "customerCategoryPage";
     }
 
@@ -30,16 +30,15 @@ public class CustomerController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/userOrders")
-    public String userOrdersPage(){
+    public String userOrdersPage() {
         return "userOrdersPage";
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/userOrderDetailsPage")
-    public String userOrderDetailsPage(){
+    public String userOrderDetailsPage() {
         return "userOrderDetailsPage";
     }
-
 
 
 }

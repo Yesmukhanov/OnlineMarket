@@ -9,7 +9,7 @@ public class OrderController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping(value = "/orderDetails")
-    public String orderDetailsPage(){
+    public String orderDetailsPage() {
         return "orderDetailsPage";
     }
 }

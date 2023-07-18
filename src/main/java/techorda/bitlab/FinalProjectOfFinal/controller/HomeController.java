@@ -37,7 +37,7 @@ public class HomeController {
     }
 
     @GetMapping(value = "/sign_up_page")
-    public String signUpPage(){
+    public String signUpPage() {
         return "signUpPage";
     }
 
@@ -46,9 +46,9 @@ public class HomeController {
             @RequestParam(name = "user_email") String email,
             @RequestParam(name = "user_password") String password,
             @RequestParam(name = "user_repeat_password") String repeatPassword,
-            @RequestParam(name = "user_full_name") String fullName){
+            @RequestParam(name = "user_full_name") String fullName) {
 
-        if (password.equals(repeatPassword)){
+        if (password.equals(repeatPassword)) {
             User user = new User();
             user.setEmail(email);
             user.setPassword(password);
@@ -56,11 +56,11 @@ public class HomeController {
             User newUser = null;
             try {
                 newUser = userService.addUser(user);
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            if (newUser != null){
+            if (newUser != null) {
                 return "redirect:/sign_up_page?success";
             } else {
                 return "redirect:/sign_up_page?emailerror";
@@ -72,22 +72,21 @@ public class HomeController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/change_password_page")
-    public String changePasswordPage(){
+    public String changePasswordPage() {
         return "changePassword";
     }
-
 
 
     @PostMapping(value = "/to_change_password")
     public String changePassword(
             @RequestParam(name = "user_old_password") String oldPassword,
             @RequestParam(name = "user_new_password") String newPassword,
-            @RequestParam(name = "user_new_repeat_password") String newRepeatPassword){
+            @RequestParam(name = "user_new_repeat_password") String newRepeatPassword) {
 
-        if (newPassword.equals(newRepeatPassword)){
+        if (newPassword.equals(newRepeatPassword)) {
             User user = userService.changePassword(oldPassword, newPassword);
-            if (user != null){
-                return  "redirect:/change_password_page?success";
+            if (user != null) {
+                return "redirect:/change_password_page?success";
             } else {
                 return "redirect:/change_password_page?oldpassworderror";
             }

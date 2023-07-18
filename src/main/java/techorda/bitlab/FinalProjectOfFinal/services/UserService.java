@@ -28,20 +28,20 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);
-        if (user != null && !user.isStatus()){
+        if (user != null && !user.isStatus()) {
             return user;
         } else {
             throw new UsernameNotFoundException("User Not Found");
         }
     }
 
-    public User addUser(User user){
+    public User addUser(User user) {
         User checkUser = userRepository.findByEmail(user.getEmail());
         Permission permission = repository.findById(2L).orElse(null);
         List<Permission> permissions = new ArrayList<>();
         permissions.add(permission);
 
-        if (checkUser == null){
+        if (checkUser == null) {
             user.setPermissions(permissions);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRoleId(2);
@@ -51,21 +51,21 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public User getCurrentSession(){
+    public User getCurrentSession() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (!(authentication instanceof AnonymousAuthenticationToken)){
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
             return (User) (authentication.getPrincipal());
         }
 
         return null;
     }
 
-    public User changePassword(String oldPassword, String newPassword){
+    public User changePassword(String oldPassword, String newPassword) {
 
         User currentUser = getCurrentSession();
 
-        if (passwordEncoder.matches(oldPassword, currentUser.getPassword())){
+        if (passwordEncoder.matches(oldPassword, currentUser.getPassword())) {
             currentUser.setPassword(passwordEncoder.encode(newPassword));
             return userRepository.save(currentUser);
         }

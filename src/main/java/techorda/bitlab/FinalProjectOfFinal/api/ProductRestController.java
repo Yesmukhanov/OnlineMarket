@@ -31,12 +31,12 @@ public class ProductRestController {
     }
 
     @PutMapping
-    public ProductDTO updateProduct(@RequestBody ProductDTO productDTO){
+    public ProductDTO updateProduct(@RequestBody ProductDTO productDTO) {
         return productService.updateProduct(productDTO);
     }
 
     @DeleteMapping(value = "{id}")
-    public void deleteProduct(@PathVariable(name = "id") Long id){
+    public void deleteProduct(@PathVariable(name = "id") Long id) {
         productService.deleteProduct(id);
     }
 }

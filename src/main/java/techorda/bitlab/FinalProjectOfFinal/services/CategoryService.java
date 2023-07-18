@@ -15,23 +15,23 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
-    public List<CategoryDTO> getCategories(){
+    public List<CategoryDTO> getCategories() {
         return categoryMapper.toDtoList(categoryRepository.findAll());
     }
 
-    public CategoryDTO addCategory(CategoryDTO categoryDTO){
+    public CategoryDTO addCategory(CategoryDTO categoryDTO) {
         return categoryMapper.toDTO(categoryRepository.save(categoryMapper.toModel(categoryDTO)));
     }
 
-    public CategoryDTO getCategory(Long id){
+    public CategoryDTO getCategory(Long id) {
         return categoryMapper.toDTO(categoryRepository.findById(id).orElseThrow());
     }
 
-    public CategoryDTO updateCategory(CategoryDTO categoryDTO){
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
         return categoryMapper.toDTO(categoryRepository.save(categoryMapper.toModel(categoryDTO)));
     }
 
-    public void deleteCategory(Long id){
+    public void deleteCategory(Long id) {
         categoryRepository.deleteById(id);
     }
 

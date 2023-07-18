@@ -12,6 +12,7 @@ public interface UserMapper {
 
     @Mapping(source = "id", target = "id")
     UserDTO toDTO(User user);
+
     User toModel(UserDTO userDTO);
 
     List<UserDTO> toDtoList(List<User> users);

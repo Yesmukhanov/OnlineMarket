@@ -23,5 +23,4 @@ public class Product extends baseModel {
     private Category category;
 
 
-
 }

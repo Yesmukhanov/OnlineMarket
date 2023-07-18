@@ -9,19 +9,19 @@ public class AdminController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping(value = "/admin_panel")
-    public String adminPanelPage(){
+    public String adminPanelPage() {
         return "adminPanelPage";
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping(value = "/usersPage")
-    public String AllUsersPage(){
+    public String AllUsersPage() {
         return "allUsersPage";
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping(value = "/addUserPage")
-    public String addUserPageAdmin(){
+    public String addUserPageAdmin() {
         return "addUserPageAdmin";
     }
 

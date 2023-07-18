@@ -11,7 +11,7 @@ public class ProductController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping(value = "/addProductPage")
-    public String addProductPage(){
+    public String addProductPage() {
         return "categoryPage";
     }
 
