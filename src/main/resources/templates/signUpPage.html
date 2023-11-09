@@ -10,15 +10,18 @@
                 Email is busy!
                 <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
             </div>
+
             <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${param.success != null}">
                 You Are Successfully Registered!
                 <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
             </div>
+
             <div class="alert alert-danger alert-dismissible fade show" role="alert"
                  th:if="${param.passworderror != null}">
                 Password Are Not Same!
                 <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
             </div>
+
             <form method="post" th:action="@{'/to_sign_up'}">
                 <div class="row mt-3">
                     <div class="col-12">
@@ -69,11 +72,6 @@
                 </div>
             </form>
         </div>
-        <script type="text/javascript">
-            function addUser(){
-
-            }
-        </script>
     </div>
 </div>
 </html>

@@ -1,11 +1,13 @@
 package techorda.bitlab.FinalProjectOfFinal.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import techorda.bitlab.FinalProjectOfFinal.Mapper.UserMapper;
 import techorda.bitlab.FinalProjectOfFinal.dto.UserDTO;
 import techorda.bitlab.FinalProjectOfFinal.model.Permission;
 import techorda.bitlab.FinalProjectOfFinal.model.User;
+import techorda.bitlab.FinalProjectOfFinal.repository.OrderRepository;
 import techorda.bitlab.FinalProjectOfFinal.repository.PermissionRepository;
 import techorda.bitlab.FinalProjectOfFinal.repository.UserRepository;
 
@@ -14,11 +16,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AdminService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PermissionRepository permissionRepository;
+    private final OrderRepository orderRepository;
 
     public List<UserDTO> getAllUsers() {
         return this.userMapper.toDtoList(userRepository.findAll());
@@ -49,7 +53,9 @@ public class AdminService {
     }
 
     public void deleteUser(Long id) {
+        orderRepository.deleteByUserId(id);
         userRepository.deleteById(id);
+
     }
 
     public UserDTO addUser(UserDTO userDTO) {
