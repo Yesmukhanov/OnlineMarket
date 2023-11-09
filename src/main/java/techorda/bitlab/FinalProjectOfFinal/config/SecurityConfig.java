@@ -28,8 +28,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
@@ -64,21 +62,5 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-//        http.csrf().disable()
-//                .cors().disable()
-//                .authorizeRequests()
-//                .requestMatchers("/secured").authenticated()
-//                .requestMatchers("/admin").hasAnyRole("ADMIN")
-//                .anyRequest().permitAll()
-//                .and()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .exceptionHandling()
-//                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
-//
-//        return http.build();
-//    }
 
 }
