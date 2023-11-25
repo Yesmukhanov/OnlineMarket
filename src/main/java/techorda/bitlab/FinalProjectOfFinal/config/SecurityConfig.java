@@ -29,38 +29,34 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
+    public AuthenticationManager authenticationManager(
+        final AuthenticationConfiguration authenticationConfiguration
+    ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
+    public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
         http.exceptionHandling().accessDeniedPage("/403_page");
 
-        AuthenticationManagerBuilder builder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
+        final AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
 
         builder.userDetailsService(userService()).passwordEncoder(passwordEncoder());
 
-
         http.formLogin()
-                .loginPage("/sign_in_page")
-                .loginProcessingUrl("/to_enter")
-                .usernameParameter("user_email")
-                .passwordParameter("user_password")
-                .defaultSuccessUrl("/profile")
-                .failureUrl("/sign_in_page?autherror");
+            .loginPage("/sign_in_page")
+            .loginProcessingUrl("/to_enter")
+            .usernameParameter("user_email")
+            .passwordParameter("user_password")
+            .defaultSuccessUrl("/profile")
+            .failureUrl("/sign_in_page?autherror");
 
         http.logout()
-                .logoutUrl("/sign_out")
-                .logoutSuccessUrl("/sign_in_page");
+            .logoutUrl("/sign_out")
+            .logoutSuccessUrl("/sign_in_page");
 
         http.csrf().disable();
 
         return http.build();
     }
-
 }
