@@ -29,36 +29,39 @@ public class OrderService {
     private final OrderMapper orderMapper;
     private final UserMapper userMapper;
 
-    public void addToCart(Long user_id, Long product_id) {
-        User user = userRepository.findById(user_id).orElseThrow();
-        Product product = productRepository.findById(product_id).orElseThrow();
+    public void addToCart(final Long user_id, final Long product_id) {
+        final User user = userRepository.findById(user_id).orElseThrow();
+        final Product product = productRepository.findById(product_id).orElseThrow();
         user.getProducts().add(product);
         userRepository.save(user);
     }
 
-    public List<ProductDTO> getAllUserProducts(Long user_id) {
-        User user = userRepository.findById(user_id).orElseThrow();
+    public List<ProductDTO> getAllUserProducts(final Long user_id) {
+        final User user = userRepository.findById(user_id).orElseThrow();
+
         return productMapper.toDtoList(user.getProducts());
     }
 
-    public ProductDTO deleteFromBasket(Long user_id, Long product_id) {
-        User user = userRepository.findById(user_id).orElseThrow();
-        Product product = productRepository.findById(product_id).orElseThrow();
+    public ProductDTO deleteFromBasket(final Long user_id, final Long product_id) {
+        final User user = userRepository.findById(user_id).orElseThrow();
+        final Product product = productRepository.findById(product_id).orElseThrow();
 
         user.getProducts().remove(product);
         userRepository.save(user);
+
         return productMapper.toDto(product);
     }
 
-    public OrderDTO orderAllUserProducts(Long user_id) {
+    public OrderDTO orderAllUserProducts(final Long user_id) {
         User user = userRepository.findById(user_id).orElse(null);
         List<Product> products = new ArrayList<>(user.getProducts());
         user.getProducts().clear();
 
-        Order order = new Order();
-        order.setUser(user);
-        order.setProducts(products);
-        order.setDate(LocalDateTime.now());
+        final Order order = Order.builder()
+                                 .user(user)
+                                 .products(products)
+                                 .date(LocalDateTime.now())
+                                 .build();
 
         orderRepository.save(order);
         userRepository.save(user);
@@ -71,23 +74,25 @@ public class OrderService {
         return orderMapper.toDtoList(orderRepository.findAllByOrderByStatus());
     }
 
-    public List<OrderDTO> getAllUserOrders(Long user_id) {
+    public List<OrderDTO> getAllUserOrders(final Long user_id) {
         return orderMapper.toDtoList(orderRepository.findByUserId(user_id));
     }
 
-    public OrderDTO getOrderById(Long orderId) {
+    public OrderDTO getOrderById(final Long orderId) {
         return orderMapper.toDTO(orderRepository.findById(orderId).orElseThrow());
     }
 
 
-    public List<ProductDTO> getAllOrderProducts(Long order_id) {
-        Order order = orderRepository.findById(order_id).orElseThrow();
+    public List<ProductDTO> getAllOrderProducts(final Long order_id) {
+        final Order order = orderRepository.findById(order_id).orElseThrow();
+
         return productMapper.toDtoList(order.getProducts());
     }
 
-    public OrderDTO handleOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow();
+    public OrderDTO handleOrder(final Long orderId) {
+        final Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus(1);
+
         return orderMapper.toDTO(orderRepository.save(order));
     }
 

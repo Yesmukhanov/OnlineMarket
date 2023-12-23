@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import fullstack.finalProject.services.UserService;
 
+import java.util.Objects;
+
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
@@ -43,13 +45,13 @@ public class HomeController {
 
     @PostMapping(value = "/to_sign_up")
     public String toSignUp(
-            @RequestParam(name = "user_email") String email,
-            @RequestParam(name = "user_password") String password,
-            @RequestParam(name = "user_repeat_password") String repeatPassword,
-            @RequestParam(name = "user_full_name") String fullName) {
-
+        @RequestParam(name = "user_email") final String email,
+        @RequestParam(name = "user_password") final String password,
+        @RequestParam(name = "user_repeat_password") final String repeatPassword,
+        @RequestParam(name = "user_full_name") final String fullName
+    ) {
         if (password.equals(repeatPassword)) {
-            User user = new User();
+            final User user = new User();
             user.setEmail(email);
             user.setPassword(password);
             user.setFullName(fullName);
@@ -60,7 +62,7 @@ public class HomeController {
                 e.printStackTrace();
             }
 
-            if (newUser != null) {
+            if (Objects.nonNull(newUser)) {
                 return "redirect:/sign_up_page?success";
             } else {
                 return "redirect:/sign_up_page?emailerror";
@@ -79,13 +81,14 @@ public class HomeController {
 
     @PostMapping(value = "/to_change_password")
     public String changePassword(
-            @RequestParam(name = "user_old_password") String oldPassword,
-            @RequestParam(name = "user_new_password") String newPassword,
-            @RequestParam(name = "user_new_repeat_password") String newRepeatPassword) {
+        @RequestParam(name = "user_old_password") final String oldPassword,
+        @RequestParam(name = "user_new_password") final String newPassword,
+        @RequestParam(name = "user_new_repeat_password") final String newRepeatPassword
+    ) {
+        final User user = userService.changePassword(oldPassword, newPassword);
 
         if (newPassword.equals(newRepeatPassword)) {
-            User user = userService.changePassword(oldPassword, newPassword);
-            if (user != null) {
+            if (Objects.nonNull(user)) {
                 return "redirect:/change_password_page?success";
             } else {
                 return "redirect:/change_password_page?oldpassworderror";
@@ -94,6 +97,5 @@ public class HomeController {
             return "redirect:/change_password_page?passwordmismatch";
         }
     }
-
 
 }

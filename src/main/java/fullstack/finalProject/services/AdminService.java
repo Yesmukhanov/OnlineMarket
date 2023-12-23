@@ -28,37 +28,40 @@ public class AdminService {
         return this.userMapper.toDtoList(userRepository.findAll());
     }
 
-    public UserDTO getUser(Long id) {
+    public UserDTO getUser(final Long id) {
         return userMapper.toDTO(userRepository.findById(id).orElseThrow());
     }
 
-    public User getDefaultUser(Long id) {
+    public User getDefaultUser(final Long id) {
         return userRepository.findById(id).orElseThrow();
     }
 
-    public UserDTO updateUser(UserDTO user) {
-        User user1 = getDefaultUser(user.getId());
-        User response = new User();
+    public UserDTO updateUser(final UserDTO user) {
+        final User user1 = getDefaultUser(user.getId());
+        final User response = new User();
+        final Permission permission = permissionRepository.findById(Long.valueOf(user.getRoleId())).orElseThrow();
+        final List<Permission> permissions = new ArrayList<>();
+
         response.setId(user.getId());
         response.setEmail(user.getEmail());
         response.setFullName(user.getFullName());
         response.setStatus(user.isStatus());
         response.setPassword(user1.getPassword());
         response.setRoleId(user.getRoleId());
-        Permission permission = permissionRepository.findById(Long.valueOf(user.getRoleId())).orElseThrow();
-        List<Permission> permissions = new ArrayList<>();
+
         permissions.add(permission);
         response.setPermissions(permissions);
+
         return userMapper.toDTO(userRepository.save(response));
     }
 
-    public void deleteUser(Long id) {
+    public void deleteUser(final Long id) {
         orderRepository.deleteByUserId(id);
         userRepository.deleteById(id);
 
     }
 
-    public UserDTO addUser(UserDTO userDTO) {
+    public UserDTO addUser(final UserDTO userDTO) {
         return userMapper.toDTO(userMapper.toModel(userDTO));
     }
 

@@ -19,19 +19,19 @@ public class CategoryService {
         return categoryMapper.toDtoList(categoryRepository.findAll());
     }
 
-    public CategoryDTO addCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO addCategory(final CategoryDTO categoryDTO) {
         return categoryMapper.toDTO(categoryRepository.save(categoryMapper.toModel(categoryDTO)));
     }
 
-    public CategoryDTO getCategory(Long id) {
+    public CategoryDTO getCategory(final Long id) {
         return categoryMapper.toDTO(categoryRepository.findById(id).orElseThrow());
     }
 
-    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO updateCategory(final CategoryDTO categoryDTO) {
         return categoryMapper.toDTO(categoryRepository.save(categoryMapper.toModel(categoryDTO)));
     }
 
-    public void deleteCategory(Long id) {
+    public void deleteCategory(final Long id) {
         categoryRepository.deleteById(id);
     }
 }
