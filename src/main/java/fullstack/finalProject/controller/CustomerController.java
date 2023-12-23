@@ -18,7 +18,7 @@ public class CustomerController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "{id}")
-    public String cartPage(@PathVariable(name = "id") Long id) {
+    public String cartPage(@PathVariable(name = "id") final Long id) {
         return "customerCategoryPage";
     }
 

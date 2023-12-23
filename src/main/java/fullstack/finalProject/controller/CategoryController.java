@@ -17,7 +17,7 @@ public class CategoryController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping(value = "/category1/{id}")
-    public String categoryPage(@PathVariable(name = "id") Long id) {
+    public String categoryPage(@PathVariable(name = "id") final Long id) {
         return "productPage";
     }
 }
